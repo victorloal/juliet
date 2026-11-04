@@ -1,56 +1,214 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Juliet</title>
-  <style>
-    :root {
-      color-scheme: light dark;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
-      color: #f5f3ff;
-      padding: 2rem;
-    }
-    .card {
-      max-width: 640px;
-      text-align: center;
-    }
-    h1 {
-      font-size: 3.5rem;
-      margin: 0 0 0.5rem;
-      letter-spacing: -0.02em;
-    }
-    p {
-      font-size: 1.15rem;
-      line-height: 1.6;
-      opacity: 0.9;
-      margin: 0 0 1.5rem;
-    }
-    .badge {
-      display: inline-block;
-      padding: 0.5rem 1.25rem;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      border-radius: 999px;
-      font-size: 0.9rem;
-      letter-spacing: 0.03em;
-      background: rgba(255, 255, 255, 0.08);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruleta del conocimiento | Grupo Nutresa</title>
+<style>
+:root{--green:#145b36;--green2:#2d8a50;--lime:#c7df75;--cream:#fff9e9;--gold:#e8b83e;--ink:#18352a;--pink:#f4b9a9}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:linear-gradient(135deg,#e8f2d5,#fff9e9 55%,#dcefdc);min-height:100vh}
+header{padding:28px 18px 18px;text-align:center;background:linear-gradient(120deg,#104b2e,#267b45);color:#fff}
+header h1{font-family:Georgia,serif;font-size:clamp(2rem,5vw,3.3rem);margin:0 0 6px}
+header p{margin:0 auto;max-width:760px;font-size:1rem;color:#f3f7df}
+main{max-width:1120px;margin:24px auto;padding:0 16px 40px;display:grid;grid-template-columns:minmax(300px,1fr) minmax(300px,1fr);gap:20px}
+.panel{background:#fffdf5;border:2px solid #d7e6b3;border-radius:24px;padding:20px;box-shadow:0 8px 24px #345b2517}
+.panel h2{margin:0 0 8px;color:var(--green);font-size:1.35rem}
+.hint{color:#52665a;font-size:.93rem;margin:0 0 16px}
+.wheel-wrap{position:relative;width:min( min(78vw,390px),100%);aspect-ratio:1;margin:18px auto 12px}
+.pointer{position:absolute;z-index:3;left:50%;top:-12px;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:34px solid #d9432f;filter:drop-shadow(0 2px 2px #5555)}
+.wheel{width:100%;height:100%;border-radius:50%;border:9px solid #fff;outline:5px solid var(--gold);background:conic-gradient(#1c7545 0deg 36deg,#e8bd45 36deg 72deg,#4b9cba 72deg 108deg,#e58c70 108deg 144deg,#7c68a8 144deg 180deg,#8dbb50 180deg 216deg,#d46c88 216deg 252deg,#3d8f82 252deg 288deg,#d69b3c 288deg 324deg,#5982bd 324deg 360deg);position:relative;transition:transform 4s cubic-bezier(.12,.78,.15,1);box-shadow:inset 0 0 0 3px #ffffffa8,0 7px 18px #284a2530}
+.wheel-label{position:absolute;left:50%;top:50%;width:48%;height:28px;margin-top:-14px;transform-origin:0 50%;display:flex;align-items:center;padding-left:22px;color:#fff;font-weight:800;font-size:clamp(10px,1.6vw,13px);text-shadow:0 1px 3px #222;white-space:nowrap}
+.wheel-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;background:#fff9e9;border:5px solid var(--gold);display:grid;place-items:center;font-size:1.8rem;box-shadow:0 2px 8px #0003}
+button{border:0;border-radius:999px;padding:12px 20px;font-weight:800;font-size:1rem;cursor:pointer;transition:.15s}
+button:hover{transform:translateY(-1px);filter:brightness(1.04)}
+button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.primary{background:var(--green);color:#fff;display:block;margin:14px auto}
+.secondary{background:#e7efcf;color:var(--green)}
+#selected{min-height:28px;text-align:center;font-weight:800;color:var(--green);margin:8px 0}
+.question-box{background:#f2f7df;border:1px solid #d6e5ae;border-radius:18px;padding:16px;margin-top:12px}
+.question-box h3{margin:0 0 8px;color:var(--green)}
+#question{font-weight:700;line-height:1.45}
+.answers{display:grid;gap:9px;margin-top:14px}
+.answer{background:#fff;border:2px solid #dce6c5;border-radius:13px;text-align:left;color:#253b2c;padding:11px 13px}
+.answer.correct{border-color:#2c9b55;background:#e8f7e9}
+.answer.wrong{border-color:#d45d4d;background:#fff0ed}
+.feedback{min-height:26px;font-weight:700;margin:12px 0 0}
+.scorebar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#f8f1d9;padding:12px 14px;border-radius:14px;font-weight:800;margin-top:16px}
+.taglist{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.tag{background:#e8f0d5;border-radius:99px;padding:6px 10px;font-size:.82rem;color:#315b37;font-weight:700}
+.rules{padding-left:20px;line-height:1.6}
+footer{text-align:center;padding:0 16px 26px;color:#52665a;font-size:.85rem}
+@media(max-width:760px){main{grid-template-columns:1fr}.panel{padding:16px}.wheel-wrap{width:min(78vw,350px)}}
+</style>
 </head>
 <body>
-  <main class="card">
-    <h1>Juliet</h1>
-    <p>Esta es la página de ejemplo servida con GitHub Pages. Edita <code>index.html</code> para añadir tu contenido.</p>
-    <span class="badge">GitHub Pages &bull; activo</span>
-  </main>
+<header>
+  <h1>🌿 Ruleta del conocimiento</h1>
+  <p>Grupo Nutresa y las empresas de nuestra región · Gira, responde y demuestra lo que aprendiste.</p>
+</header>
+<main>
+<section class="panel">
+  <h2>🎡 Gira la ruleta</h2>
+  <p class="hint">La ruleta escogerá al azar uno de los temas que deben investigar.</p>
+  <div class="wheel-wrap">
+    <div class="pointer"></div>
+    <div class="wheel" id="wheel"></div>
+    <div class="wheel-center">🌱</div>
+  </div>
+  <div id="selected">¡Prepárate para jugar!</div>
+  <button class="primary" id="spin">Girar la ruleta</button>
+  <div class="taglist" aria-label="Temas incluidos">
+    <span class="tag">Historia</span><span class="tag">Trayectoria</span><span class="tag">Retos</span>
+    <span class="tag">Grupo empresarial</span><span class="tag">Organigrama</span><span class="tag">Sector</span>
+    <span class="tag">Productos</span><span class="tag">Impacto</span><span class="tag">Estrategias</span><span class="tag">Logros</span>
+  </div>
+</section>
+<section class="panel">
+  <h2>🧠 Responde el desafío</h2>
+  <p class="hint">Después de girar, aparecerá una pregunta relacionada con el tema seleccionado.</p>
+  <div class="question-box">
+    <h3 id="category">Tu pregunta aparecerá aquí</h3>
+    <div id="question">Pulsa “Girar la ruleta” para comenzar.</div>
+    <div class="answers" id="answers"></div>
+    <p class="feedback" id="feedback" aria-live="polite"></p>
+    <button class="secondary" id="next" disabled>Siguiente turno</button>
+  </div>
+  <div class="scorebar"><span>⭐ Puntaje: <b id="score">0</b></span><span>🎯 Aciertos: <b id="hits">0</b></span><span>🔄 Turnos: <b id="turns">0</b></span></div>
+</section>
+<section class="panel">
+  <h2>📚 ¿Qué temas se evalúan?</h2>
+  <ol class="rules">
+    <li>Historia: origen, constitución y fundación.</li>
+    <li>Trayectoria: años en el mercado y evolución.</li>
+    <li>Retos: competencia, cambios del consumidor y sostenibilidad.</li>
+    <li>Grupo empresarial y estructura organizacional.</li>
+    <li>Actividad económica y sector productivo.</li>
+    <li>Productos, servicios y marcas.</li>
+    <li>Impacto en la región y en el país.</li>
+    <li>Estrategias, innovación y logros destacados.</li>
+  </ol>
+</section>
+<section class="panel">
+  <h2>🏆 Cómo jugar en grupo</h2>
+  <ol class="rules">
+    <li>Dividan el salón en equipos o participen por turnos.</li>
+    <li>Un participante gira la ruleta y lee la pregunta.</li>
+    <li>El equipo tiene 30 segundos para responder.</li>
+    <li>Respuesta correcta: 10 puntos. Si no acierta, otro equipo puede intentarlo.</li>
+    <li>Para preguntas abiertas, el docente o moderador valida la respuesta.</li>
+  </ol>
+  <p class="hint"><b>Idea extra:</b> después de responder, el equipo debe explicar cómo se relaciona ese tema con Grupo Nutresa o con una empresa de la región.</p>
+  <button class="secondary" id="reset">Reiniciar puntaje</button>
+</section>
+</main>
+<footer>Actividad educativa interactiva · Puedes abrir este archivo en un navegador y proyectarlo en clase.</footer>
+<script>
+const categories = [
+ {name:"Historia y constitución",qs:[
+  {q:"¿Qué información permite explicar cómo se constituyó una empresa?",a:["Su origen, fundadores, fecha y circunstancias de creación","Únicamente sus productos actuales","Solo el número de empleados"],c:0,e:"La historia empresarial debe explicar el origen, quiénes la impulsaron, cuándo nació y cómo evolucionó."},
+  {q:"¿En qué ciudad nació la empresa que dio origen a Grupo Nutresa en 1920?",a:["Cali","Medellín","Pasto"],c:1,e:"La Compañía Nacional de Chocolates se fundó en Medellín en 1920."}
+ ]},
+ {name:"Trayectoria en el mercado",qs:[
+  {q:"¿Qué se debe investigar para describir la trayectoria de una empresa?",a:["Solo su logotipo","Su evolución, crecimiento, expansión y cambios a través del tiempo","Únicamente el precio de sus productos"],c:1,e:"La trayectoria muestra cómo ha cambiado y crecido la organización a lo largo de los años."},
+  {q:"¿Cuál de estos elementos ayuda a construir una línea de tiempo empresarial?",a:["Fechas de fundación, expansión, lanzamientos y cambios importantes","Opiniones sin fecha","Una lista de colores corporativos"],c:0,e:"Una línea de tiempo organiza los principales acontecimientos en orden cronológico."}
+ ]},
+ {name:"Retos empresariales",qs:[
+  {q:"¿Cuál es un reto frecuente para una empresa de alimentos?",a:["Evitar toda innovación","La variación en costos de materias primas y la competencia","No escuchar al consumidor"],c:1,e:"Los costos, la competencia y los cambios en las preferencias del consumidor son retos relevantes."},
+  {q:"¿Por qué la sostenibilidad representa un desafío empresarial?",a:["Porque exige gestionar impactos ambientales y sociales","Porque elimina la necesidad de calidad","Porque impide innovar"],c:0,e:"La sostenibilidad requiere reducir impactos y generar valor económico, social y ambiental."}
+ ]},
+ {name:"Grupo empresarial",qs:[
+  {q:"¿Qué significa pertenecer a un grupo empresarial?",a:["Ser una empresa sin relación con otras","Formar parte de un conjunto de sociedades vinculadas bajo una dirección o estrategia común","Tener únicamente una marca"],c:1,e:"Un grupo empresarial reúne sociedades relacionadas y coordinadas bajo una unidad de propósito y dirección."},
+  {q:"¿Qué conviene identificar al investigar el grupo al que pertenece una empresa?",a:["Matriz, filiales, negocios y relaciones entre compañías","Solo sus redes sociales","El color de sus oficinas"],c:0,e:"Esto permite comprender cómo está organizado el grupo y qué papel cumple cada compañía."}
+ ]},
+ {name:"Organigrama y estructura",qs:[
+  {q:"¿Qué representa un organigrama?",a:["La estructura de cargos, áreas y relaciones de autoridad","El catálogo de productos","Los ingresos mensuales"],c:0,e:"El organigrama permite visualizar áreas, niveles jerárquicos y líneas de reporte."},
+  {q:"¿Qué información ayuda a reconocer el tipo de organigrama?",a:["Cómo se distribuyen las áreas y quién reporta a quién","El tamaño de los empaques","La antigüedad de los clientes"],c:0,e:"La forma de distribuir funciones y autoridad ayuda a identificar su estructura."}
+ ]},
+ {name:"Actividad económica y sector",qs:[
+  {q:"¿A qué actividad económica se asocia principalmente Grupo Nutresa?",a:["Producción y comercialización de alimentos","Construcción de carreteras","Servicios de transporte aéreo"],c:0,e:"Su actividad principal se relaciona con la industria de alimentos y negocios asociados."},
+  {q:"¿Qué diferencia al sector secundario del terciario?",a:["El secundario transforma materias primas; el terciario presta servicios y comercializa","Son exactamente iguales","El terciario solo cultiva alimentos"],c:0,e:"La transformación industrial corresponde al sector secundario; comercio y servicios se ubican en el terciario."}
+ ]},
+ {name:"Productos, servicios y marcas",qs:[
+  {q:"¿Cuál de estas opciones reúne marcas asociadas al portafolio de Nutresa?",a:["Colcafé, Noel, Doria y Zenú","Bancolombia, Avianca y Ecopetrol","Éxito, Claro y RCN"],c:0,e:"Colcafé, Noel, Doria y Zenú son ejemplos de marcas del portafolio de alimentos."},
+  {q:"¿Qué conviene analizar al describir los productos de una empresa?",a:["Categorías, consumidores, características y canales de venta","Solo el color de las etiquetas","Únicamente el nombre del gerente"],c:0,e:"El análisis debe explicar qué ofrece, a quién se dirige y cómo llega al mercado."}
+ ]},
+ {name:"Impacto regional y nacional",qs:[
+  {q:"¿Cuál es un ejemplo de impacto de una empresa en su región?",a:["Generación de empleo, compras a proveedores y aporte económico","Cambiar el clima","Eliminar todas las actividades comerciales"],c:0,e:"El impacto puede observarse en empleo, proveedores, impuestos, inversión y desarrollo local."},
+  {q:"¿Cómo se puede investigar el impacto social de una organización?",a:["Revisando programas comunitarios, educación, nutrición y bienestar","Contando únicamente sus anuncios","Observando solo el empaque"],c:0,e:"Los programas y resultados sociales permiten conocer su contribución a las comunidades."}
+ ]},
+ {name:"Estrategias empresariales",qs:[
+  {q:"¿Cuál es un ejemplo de estrategia para competir en el mercado?",a:["Innovar en productos, fortalecer marcas y mejorar distribución","Dejar de escuchar al cliente","Reducir todos los controles de calidad"],c:0,e:"Innovación, marcas sólidas y distribución eficiente ayudan a competir."},
+  {q:"¿Para qué sirve una estrategia empresarial?",a:["Orientar decisiones y recursos para alcanzar objetivos","Reemplazar la misión y visión sin análisis","Evitar medir resultados"],c:0,e:"La estrategia define prioridades y acciones para cumplir metas organizacionales."}
+ ]},
+ {name:"Logros y reconocimientos",qs:[
+  {q:"¿Qué evidencia permite sustentar un logro empresarial?",a:["Indicadores, resultados, certificaciones o reconocimientos verificables","Comentarios anónimos sin fuente","Una afirmación sin fecha ni evidencia"],c:0,e:"Los logros deben demostrarse con datos, informes o reconocimientos confiables."},
+  {q:"¿Qué se debe hacer al presentar un reconocimiento de una empresa?",a:["Indicar quién lo otorgó, cuándo y por qué","Aumentar su alcance sin verificar","Presentarlo como propio sin fuente"],c:0,e:"Es importante verificar el origen, la fecha y el alcance del reconocimiento."}
+ ]}
+];
+const wheel=document.getElementById("wheel");
+const spinBtn=document.getElementById("spin");
+const nextBtn=document.getElementById("next");
+let rotation=0,current=null,score=0,hits=0,turns=0,answered=false;
+categories.forEach((cat,i)=>{
+ const label=document.createElement("div");
+ label.className="wheel-label";
+ label.textContent=cat.name.length>19?cat.name.slice(0,18)+"…":cat.name;
+ label.style.transform=`rotate(${i*36+5}deg)`;
+ wheel.appendChild(label);
+});
+function showQuestion(cat){
+ current=cat;answered=false;
+ const q=cat.qs[Math.floor(Math.random()*cat.qs.length)];
+ document.getElementById("category").textContent=cat.name;
+ document.getElementById("question").textContent=q.q;
+ document.getElementById("feedback").textContent="";
+ const box=document.getElementById("answers");box.innerHTML="";
+ q.a.forEach((ans,i)=>{
+  const b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+". "+ans;
+  b.onclick=()=>{
+   if(answered)return;answered=true;turns++;
+   if(i===q.c){score+=10;hits++;b.classList.add("correct");document.getElementById("feedback").textContent="¡Correcto! +10 puntos. "+q.e;}
+   else{b.classList.add("wrong");box.children[q.c].classList.add("correct");document.getElementById("feedback").textContent="No es esa opción. "+q.e;}
+   document.getElementById("score").textContent=score;
+   document.getElementById("hits").textContent=hits;
+   document.getElementById("turns").textContent=turns;
+   [...box.children].forEach(x=>x.disabled=true);
+   nextBtn.disabled=false;
+  };
+  box.appendChild(b);
+ });
+ nextBtn.disabled=true;
+}
+spinBtn.onclick=()=>{
+ if(!answered && current){document.getElementById("feedback").textContent="Responde la pregunta actual antes de girar de nuevo.";return;}
+ spinBtn.disabled=true;nextBtn.disabled=true;
+ const index=Math.floor(Math.random()*categories.length);
+ const slice=360/categories.length;
+ const target=360*5+(360-index*slice-slice/2);
+ rotation+=target;
+ wheel.style.transform=`rotate(${rotation}deg)`;
+ setTimeout(()=>{
+  const cat=categories[index];
+  document.getElementById("selected").textContent="Tema seleccionado: "+cat.name;
+  showQuestion(cat);spinBtn.disabled=false;
+ },4100);
+};
+nextBtn.onclick=()=>{
+ current=null;document.getElementById("category").textContent="Siguiente turno";
+ document.getElementById("question").textContent="Pulsa “Girar la ruleta” para elegir otro tema.";
+ document.getElementById("answers").innerHTML="";
+ document.getElementById("feedback").textContent="";
+ nextBtn.disabled=true;
+};
+document.getElementById("reset").onclick=()=>{
+ score=0;hits=0;turns=0;current=null;answered=false;rotation=0;wheel.style.transform="rotate(0deg)";
+ document.getElementById("score").textContent="0";document.getElementById("hits").textContent="0";document.getElementById("turns").textContent="0";
+ document.getElementById("selected").textContent="¡Puntaje reiniciado!";
+ document.getElementById("category").textContent="Tu pregunta aparecerá aquí";
+ document.getElementById("question").textContent="Pulsa “Girar la ruleta” para comenzar.";
+ document.getElementById("answers").innerHTML="";document.getElementById("feedback").textContent="";nextBtn.disabled=true;spinBtn.disabled=false;
+};
+</script>
 </body>
 </html>
